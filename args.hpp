@@ -17,10 +17,24 @@
 // # The script gives you the start arguments of cling
 // ######################################################################
 
+#include "cling/Interpreter/IncrementalCUDADeviceCompiler.h"
 #include "cling/Interpreter/Interpreter.h"
 #include "cling/Interpreter/InvocationOptions.h"
+#include "llvm/Support/raw_ostream.h"
 #include <vector>
 
-std::vector<const char*> get_args() {
+std::vector<const char *> get_args() {
   return gCling->getOptions().CompilerOpts.Remaining;
+}
+
+// returns a empty list, if the CUDA mode is disabled
+std::vector<const char *> get_ptx_args() {
+  if (gCling->getCUDACompiler() == nullptr) {
+    return std::vector<const char *>();
+  }
+
+  return gCling->getCUDACompiler()
+      ->getPTXInterpreter()
+      ->getOptions()
+      .CompilerOpts.Remaining;
 }
